@@ -35,7 +35,7 @@ Hardware Required:
 - Status LED for 2310 and 2355 
 
 
-![image]C:\Users\beauc\OneDrive\Documents\EELE_465\final-project-bcoburn618\docs\planning\Final_Project_Proposal_Circuit_Diagram.jpg
+![Circuit Diagram](Final_Project_Proposal_Circuit_Diagram.jpg)
 ## Software overview
 
 Discuss, at a high level, a concept of how your code will work. Include a *high-level* flowchart. This is a high-level concept that should concisely communicate the project's concept.
