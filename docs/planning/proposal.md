@@ -1,17 +1,41 @@
 # Final project proposal
 
-- [ ] I have reviewed the project guidelines.
-- [ ] I will be working alone on this project.
-- [ ] No significant portion of this project will be (or has been) used in other course work.
+- [x] I have reviewed the project guidelines.
+- [x] I will be working alone on this project.
+- [x] No significant portion of this project will be (or has been) used in other course work.
 
 ## Embedded System Description
 
-At a high level, explain in 2-3 sentences what your embedded system will do.  Then, in 1-2 sentences each, explain each input, the process, and each output. This section is the bulk of the proposal.
+In this final project, I will be designing a digital dial board
+which will be displayed on an 64x32 RGB screen.  The dial board can be set to an ET using the 4x4 keypad and the color can be changed using the IR remote.  The LCD screen will be used to display the selected dial in which would be seen within the car.
+
+RGB Screen: The RGB screen will display decimal values from 0-9 such as 7.90 or 6.69.  Information for what number is to be be displayed will be sent over I2C from the main controller to the slave controlling the display.
+
+LCD Screen:  The LCD screen will be used to show the driver of the car the dial currently displayed on the RBG board.  A 2310 will receive data over I2C and display the current dial in.
+
+RGB LED:  This LED will flash green to indicate that a successful IR signal was received to alert the user to successful transmission.
+
+IR Receiver/Remote: The color of the screen can be changed corresponding to an input from an IR remote.  Each number on the IR remote will correspond to a certain color that will be defined and known to the user. 
+
+Push Button:  A push button will be wired to the controller to manually clear the output on the RGB screen from outside the car and will simply connect to the an I/O pin.
 
 ## Hardware Setup
 
-What hardware will you require? Provide a conceptual circuit diagram and/or block diagram to help the reviewers understand your proposal. Be sure to introduce and discuss your figures in the text.
+Hardware Required:
+- 64x32 6mm pitch RGB display
+- 1838B IR receiver and Controller (38MHz)
+- LCD Screen
+- Voltage Inverter for contrast
+- Potentiometer for adjust contrast
+- MSP4302310
+- MSP4302355
+- RGB controll module (Unknown at this time)
+- Push button
+- RGB status LED for IR
+- Status LED for 2310 and 2355 
 
+
+![image]C:\Users\beauc\OneDrive\Documents\EELE_465\final-project-bcoburn618\docs\planning\Final_Project_Proposal_Circuit_Diagram.jpg
 ## Software overview
 
 Discuss, at a high level, a concept of how your code will work. Include a *high-level* flowchart. This is a high-level concept that should concisely communicate the project's concept.
