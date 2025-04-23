@@ -81,10 +81,10 @@ char scan_keypad(void){
                 digit = key - '0';
             } else {
                 switch (key) {
-                    case 'A': digit = 10; break;
-                    case 'B': digit = 11; break;
-                    case 'C': digit = 12; break;
-                    case 'D': digit = 13; break;
+                    case 'A': digit = 0xA; break;
+                    case 'B': digit = 0xB; break;
+                    case 'C': digit = 0xC; break;
+                    case 'D': digit = 0xD; break;
                     case '*': digit = 14; break;
                     case '#': digit = 15; break;
                     default: break;  // Skip invalid keys
@@ -98,27 +98,25 @@ char scan_keypad(void){
 }
 
 int set_mode(void) {
-    char key;
-    int digit;
+    char key = scan_keypad();  // Check keypad once
+    int digit = -1;
 
-    while (1) {
-        key = scan_keypad();  // Replace with your keypad scanning function
-
-        if (key != 0) {  // A key has been pressed
-            if (key >= '0' && key <= '9') {
-                return key - '0';  // Convert ASCII to digit
-            } else {
-                switch (key) {
-                   case 'A': digit = 10; break;
-                    case 'B': digit = 11; break;
-                    case 'C': digit = 12; break;
-                    case 'D': digit = 13; break;
-                    case '*': digit = 14; break;
-                    case '#': digit = 15; break;
-                    default: break;  // Skip invalid keys
-                }
+    if (key != 0) {
+        // Decode ASCII to digit
+        if (key >= '0' && key <= '9') {
+            digit = key - '0';
+        } else {
+            switch (key) {
+                case 'A': digit = 0xA; break;
+                case 'B': digit = 0xB; break;
+                case 'C': digit = 0xC; break;
+                case 'D': digit = 0xD; break;
+                case '*': digit = 14; break;
+                case '#': digit = 15; break;
+                default: digit = -1; break;  // Invalid key
             }
         }
     }
-    return digit;
+
+    return digit;  // -1 if no key or invalid key
 }
