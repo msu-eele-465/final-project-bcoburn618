@@ -87,7 +87,7 @@ char scan_keypad(void){
                     case 'D': digit = 13; break;
                     case '*': digit = 14; break;
                     case '#': digit = 15; break;
-                    default: continue;  // Skip invalid keys
+                    default: break;  // Skip invalid keys
                 }
             }
 
@@ -95,4 +95,30 @@ char scan_keypad(void){
             i++;
         }
     }
+}
+
+int set_mode(void) {
+    char key;
+    int digit;
+
+    while (1) {
+        key = scan_keypad();  // Replace with your keypad scanning function
+
+        if (key != 0) {  // A key has been pressed
+            if (key >= '0' && key <= '9') {
+                return key - '0';  // Convert ASCII to digit
+            } else {
+                switch (key) {
+                   case 'A': digit = 10; break;
+                    case 'B': digit = 11; break;
+                    case 'C': digit = 12; break;
+                    case 'D': digit = 13; break;
+                    case '*': digit = 14; break;
+                    case '#': digit = 15; break;
+                    default: break;  // Skip invalid keys
+                }
+            }
+        }
+    }
+    return digit;
 }
