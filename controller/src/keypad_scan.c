@@ -67,30 +67,32 @@ char scan_keypad(void){
 
 }
 
-
-
-    char dial_digit(void){
-       static int digit = 0;  // Stores the last selected pattern, initially 0
+    void set_dial(char dial_in[3]) {
+    int i = 0;
     char key = 0;
+    int digit;
 
-    while (key == 0) {  // Wait for a new key press
-        key = scan_keypad();
-    }
+    while (i < 3) {
+        key = scan_keypad();  
+        if (key != 0) {             // Only decode if a key was pressed
+            rgb_control(4);         // show key has been pressed
+            //Decode ascii
+            if (key >= '0' && key <= '9') {
+                digit = key - '0';
+            } else {
+                switch (key) {
+                    case 'A': digit = 10; break;
+                    case 'B': digit = 11; break;
+                    case 'C': digit = 12; break;
+                    case 'D': digit = 13; break;
+                    case '*': digit = 14; break;
+                    case '#': digit = 15; break;
+                    default: continue;  // Skip invalid keys
+                }
+            }
 
-    // Convert key from ASCII to integer
-    if (key >= '0' && key <= '9') {
-        digit = key - '0';
-    } else {
-        switch (key) {
-            case 'A': digit = 0xA; break;
-            case 'B': digit = 0xB; break;
-            case 'C': digit = 0xC; break;
-            case 'D': digit = 0xD; break;
-            case '*': digit = 14; break;
-            case '#': digit = 15; break;
-            default: break;  // Ignore invalid keys
+            dial_in[i] = digit;
+            i++;
         }
     }
-
-    return digit;
-    }
+}

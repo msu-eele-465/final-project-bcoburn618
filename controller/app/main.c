@@ -3,7 +3,7 @@
 #include "src/controller_control.h"
 #include <msp430.h>
 
-int number;
+char dial_in[3];
 
 int main(void)
 {
@@ -18,7 +18,10 @@ int main(void)
 
     while(1)
     {
-        number  = dial_digit();
+        set_dial(dial_in);
+        dial_in[0];
+        dial_in[1];
+        dial_in[2];
         P6OUT ^= BIT6;                      // Toggle P1.0 using exclusive-OR
         __delay_cycles(100000);             // Delay for 100000*(1/MCLK)=0.1s
     }

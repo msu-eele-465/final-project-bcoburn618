@@ -5,5 +5,5 @@
 
 // Functions
 char scan_keypad(void);
-char dial_digit(void);
+char set_dial(char dial_in[3]);
 #endif
