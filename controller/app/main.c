@@ -8,6 +8,8 @@
 char dial_in[3];
 int mode;
 int board_state = 0;
+int Data_Cnt;
+volatile char Packet[] = {0x00};
 
 int main(void)
 {
@@ -69,5 +71,18 @@ int main(void)
     
         P6OUT ^= BIT6;                      // Toggle P1.0 using exclusive-OR
         __delay_cycles(100000);             // Delay for 100000*(1/MCLK)=0.1s
+    }
+}
+
+//------------------Interrupt Service Routines----------------------------------
+/* ISR for I2C, iterates through Packet for each variable to be sent*/
+#pragma vector = USCI_B1_VECTOR
+__interrupt void USCI_B1_ISR(void) {
+    UCB1TXBUF = Packet[Data_Cnt++]; // Send current byte and increment
+
+    if (Data_Cnt >= sizeof(Packet)) {
+        // Transmission complete
+        Data_Cnt = 0;
+        UCB1IE &= ~UCTXIE;  // Disable TX interrupt
     }
 }
