@@ -9,7 +9,7 @@ char dial_in[3];
 int mode;
 int board_state = 0;
 int Data_Cnt;
-volatile char Packet[] = {0x00};
+volatile char Packet[MAX_PACKET_SIZE];
 
 int main(void)
 {
@@ -44,7 +44,16 @@ int main(void)
                       mode = 0;
                       __delay_cycles(200);
                       break;
-            case 0xB: //I2C sending to slave
+            case 0xB:    Packet[0] = dial_in[0];
+                        // Packet[1] = dial_in[1];
+                        //Packet[2] = dial_in[2];
+                        UCB1I2COA0 = SLAVE_ADDRESS;
+                        Data_Cnt = 0;          //ensure count is zero
+                        UCB1TBCNT = 3;         // set packet length to 3
+                        UCB1CTLW0 |= UCTR;     // Transmitter mode
+                        UCB1IE |= UCTXIE0;     // Enable TX interrupt
+                        UCB1CTLW0 |= UCTXSTT;  // Start transmission
+                        __delay_cycles(200);
                      if(board_state == 0){
                         LCD_clear_second_line(16);
                         LCD_print("Board Off", 9);
@@ -78,11 +87,11 @@ int main(void)
 /* ISR for I2C, iterates through Packet for each variable to be sent*/
 #pragma vector = USCI_B1_VECTOR
 __interrupt void USCI_B1_ISR(void) {
-    UCB1TXBUF = Packet[Data_Cnt++]; // Send current byte and increment
-
-    if (Data_Cnt >= sizeof(Packet)) {
-        // Transmission complete
+    if(Data_Cnt < sizeof(Packet)) {
+        UCB1TXBUF = Packet[Data_Cnt++];
+    }else{ 
+        UCB1IE &= ~UCTXIE;  // Disable TX interrupt after last byte
         Data_Cnt = 0;
-        UCB1IE &= ~UCTXIE;  // Disable TX interrupt
     }
 }
+

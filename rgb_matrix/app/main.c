@@ -1,5 +1,10 @@
-
+#include "src/matrix_controller_setup.h"
 #include <msp430.h>
+#include <stddef.h>
+
+volatile int Data_Cnt;
+volatile char RXDATA[MAX_PACKET_SIZE];
+
 
 int main(void)
 {
@@ -10,10 +15,29 @@ int main(void)
 
     PM5CTL0 &= ~LOCKLPM5;                   // Disable the GPIO power-on default high-impedance mode
                                             // to activate previously configured port settings
+    rgb_controller_init();
 
     while(1)
     {
         P6OUT ^= BIT6;                      // Toggle P1.0 using exclusive-OR
         __delay_cycles(100000);             // Delay for 100000*(1/MCLK)=0.1s
+    }
+}
+//--------------Interupt Service Routines--------------------------------------------
+//I2C Receive ISR
+#pragma vector = USCI_B1_VECTOR
+__interrupt void USCI_B1_ISR(void) {
+    switch (__even_in_range(UCB1IV, 0x1E)) {
+        case 0x16:  // RXIFG0: Byte received
+            RXData[Data_Cnt++] = UCB1RXBUF;  // Store byte and increment index
+            break;
+
+        case 0x12:  // UCSTPIFG: Stop condition received
+            UCB1IFG &= ~UCSTPIFG;  // Clear STOP flag
+            Data_Cnt = 0;          // Reset counter for next transmission
+            break;
+
+        default:
+            break;
     }
 }
