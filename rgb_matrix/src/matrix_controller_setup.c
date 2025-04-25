@@ -12,7 +12,7 @@ void rgb_controller_init(void) {
     UCB1CTLW0 |= UCMODE_3 | UCSYNC;         // Set I2C mode, synchronous operation
     UCB1I2COA0 = SLAVE_ADDR | UCOAEN;       // Set slave address & enable
 
-//--Configure Ports for I2C SDA (P1.2) and SCL (P1.3)
+//--Configure Ports for I2C SDA (P4.6) and SCL (P4.7)
     P4SEL1 &= ~(BIT6 | BIT7);               // Select primary module function for I2C
     P4SEL0 |= (BIT6 | BIT7);
 

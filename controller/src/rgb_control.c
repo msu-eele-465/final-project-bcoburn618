@@ -8,6 +8,9 @@ to be selected and driven to the off board RGB LED
 #include "intrinsics.h"
 
 void rgb_control(int color){        //1=red, 2=green, 3=blue, 4=yellow
+        //Initially clear to stop invalid sets
+        P2OUT &= ~(BIT2| BIT0);     
+        P4OUT &= ~BIT0;
 
     if(color == 1){             //red
         P4OUT |= BIT0;
@@ -41,5 +44,8 @@ void rgb_control(int color){        //1=red, 2=green, 3=blue, 4=yellow
     }else if(color ==7){
          P2OUT |= (BIT2 | BIT0);  // Green + Blue
          P4OUT &= ~BIT0;
+    }else if(color == 9){
+        P2OUT &= ~(BIT2| BIT0);     //clear the RGB LED
+        P4OUT &= ~BIT0;
     }
 }

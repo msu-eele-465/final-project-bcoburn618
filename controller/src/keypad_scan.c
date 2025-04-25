@@ -43,7 +43,7 @@ char scan_keypad(void){
     unsigned int row, col;
     const char row_pin[4] = {BIT0, BIT1, BIT2, BIT3};
     const char col_pin[4] = {BIT4, BIT5, BIT6, BIT7};
-
+         
     // Loop through all the columns
     for(col = 0; col < 4; col++) {
         // Set all columns low

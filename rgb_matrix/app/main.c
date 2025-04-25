@@ -24,7 +24,7 @@ int main(void)
     }
 }
 //--------------Interupt Service Routines--------------------------------------------
-
+//--------------------------I2C Receive ISR------------------------------------------
 #pragma vector = EUSCI_B1_VECTOR
 __interrupt void EUSCI_B1_ISR(void)
 {
