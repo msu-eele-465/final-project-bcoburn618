@@ -3,7 +3,8 @@
 
 #include <msp430.h>
 
-#define SLAVE_ADDRESS 0x69
+#define SLAVE_ADDR 0x69
+#define MAX_PACKET_SIZE 3
 
 void rgb_controller_init(void);
 

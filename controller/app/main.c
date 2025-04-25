@@ -44,12 +44,13 @@ int main(void)
                       mode = 0;
                       __delay_cycles(200);
                       break;
-            case 0xB:    Packet[0] = dial_in[0];
-                        // Packet[1] = dial_in[1];
-                        //Packet[2] = dial_in[2];
-                        UCB1I2COA0 = SLAVE_ADDRESS;
+            case 0xB:  
+                        UCB1I2CSA = 0x0069; 
+                        Packet[0] = dial_in[0];
+                        Packet[1] = dial_in[1];
+                        Packet[2] = dial_in[2]; 
                         Data_Cnt = 0;          //ensure count is zero
-                        UCB1TBCNT = 3;         // set packet length to 3
+                        UCB1TBCNT = 3;         // set packet length to 1
                         UCB1CTLW0 |= UCTR;     // Transmitter mode
                         UCB1IE |= UCTXIE0;     // Enable TX interrupt
                         UCB1CTLW0 |= UCTXSTT;  // Start transmission
@@ -85,13 +86,36 @@ int main(void)
 
 //------------------Interrupt Service Routines----------------------------------
 /* ISR for I2C, iterates through Packet for each variable to be sent*/
+/*#pragma vector = USCI_B1_VECTOR
+__interrupt void USCI_B1_ISR(void) {
+    switch(__even_in_range(UCB1IV, 0x1E)) {
+        case 0x16:  // UCTXIFG0 - Transmit buffer empty
+            if (Data_Cnt < sizeof(Packet)) {
+                UCB1TXBUF = Packet[Data_Cnt++];
+            } else {
+                UCB1IE &= ~UCTXIE0;        // Disable TX interrupt
+                UCB1CTLW0 |= UCTXSTP;      // Send STOP condition
+                Data_Cnt = 0;
+            }
+            break;
+
+        // Optionally, you can add:
+        case 0x12:  // UCSTPIFG - STOP condition
+            // Can be used to signal transmission complete
+            break;
+
+        default:
+            break;
+    }
+}*/
+
 #pragma vector = USCI_B1_VECTOR
 __interrupt void USCI_B1_ISR(void) {
     if(Data_Cnt < sizeof(Packet)) {
-        UCB1TXBUF = Packet[Data_Cnt++];
-    }else{ 
-        UCB1IE &= ~UCTXIE;  // Disable TX interrupt after last byte
-        Data_Cnt = 0;
+        UCB1TXBUF = Packet[Data_Cnt++];  
+    }else{
+         Data_Cnt = 0;
+         UCB1IE &= ~UCTXIE0;        // Disable TX interrupt
+         UCB1CTLW0 |= UCTXSTP;      // Send STOP condition
     }
 }
-

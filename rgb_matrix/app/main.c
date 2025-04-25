@@ -2,8 +2,8 @@
 #include <msp430.h>
 #include <stddef.h>
 
-volatile int Data_Cnt;
-volatile char RXDATA[MAX_PACKET_SIZE];
+volatile int Data_Cnt = 0;
+volatile int RXDATA[MAX_PACKET_SIZE];
 
 
 int main(void)
@@ -24,20 +24,23 @@ int main(void)
     }
 }
 //--------------Interupt Service Routines--------------------------------------------
-//I2C Receive ISR
-#pragma vector = USCI_B1_VECTOR
-__interrupt void USCI_B1_ISR(void) {
+
+#pragma vector = EUSCI_B1_VECTOR
+__interrupt void EUSCI_B1_ISR(void)
+{
     switch (__even_in_range(UCB1IV, 0x1E)) {
-        case 0x16:  // RXIFG0: Byte received
-            RXData[Data_Cnt++] = UCB1RXBUF;  // Store byte and increment index
+        case 0x16:  
+            RXDATA[Data_Cnt++] = UCB1RXBUF;  // Read received byte
+
             break;
 
-        case 0x12:  // UCSTPIFG: Stop condition received
+        case 0x12:  // UCSTPIFG: Stop condition detected
             UCB1IFG &= ~UCSTPIFG;  // Clear STOP flag
-            Data_Cnt = 0;          // Reset counter for next transmission
             break;
 
         default:
             break;
+    
+    
     }
 }

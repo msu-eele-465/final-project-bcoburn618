@@ -4,13 +4,22 @@
 
 void rgb_controller_init(void) {
   
-    UCB1CTLW0 = UCSWRST;                         // Hold eUSCI_B1 in reset
-    UCB1CTLW0 |= UCMODE_3 | UCSYNC;              // I2C mode, synchronous
-    UCB1CTLW0 &= ~UCMST;                         // Slave mode
-    UCB1I2COA0 = SLAVE_ADDRESS | UCOAEN;         // Own address, enable
-    P4SEL0 |= BIT6 | BIT7;                       // SDA/SCL functionality
-    P4SEL1 &= ~(BIT6 | BIT7);
-    UCB1IE |= UCSTPIE | UCRXIE;                  // Enable STOP and RX interrupts
-    UCB1CTLW0 &= ~UCSWRST;                       // Release from reset
-    __enable_interrupt();                        // Enable maskable IRQs
+      //------------------------------- I2C Initialization -----------------------------    
+//--Put eUSCI_B0 into software reset to allow configuration
+    UCB1CTLW0 |= UCSWRST;       
+
+//--Configure eUSCI_B0 for I2C Slave mode
+    UCB1CTLW0 |= UCMODE_3 | UCSYNC;         // Set I2C mode, synchronous operation
+    UCB1I2COA0 = SLAVE_ADDR | UCOAEN;       // Set slave address & enable
+
+//--Configure Ports for I2C SDA (P1.2) and SCL (P1.3)
+    P4SEL1 &= ~(BIT6 | BIT7);               // Select primary module function for I2C
+    P4SEL0 |= (BIT6 | BIT7);
+
+//--Enable I2C Module
+    UCB1CTLW0 &= ~UCSWRST;                  // Release eUSCI_B0 from reset
+
+//--Enable I2C Interrupts
+    UCB1IE |= UCRXIE0;                      // Enable I2C receive interrupt
+    __bis_SR_register(GIE);                 // Enable global interrupts
 }

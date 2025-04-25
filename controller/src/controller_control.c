@@ -39,7 +39,7 @@ void controller_init(){
 	UCB1CTLW0 |= UCTR;                         // Put into Tx mode
 
     UCB1CTLW1 |= UCASTP_2;                     // Auto STOP when UCB1TBCNT reached
-	UCB1TBCNT = 1;                             // # of Bytes in Packet
+	UCB1TBCNT = 3;                             // # of Bytes in Packet
 
 //--Configure Ports SDA (P4.6) and SCL (P4.7)
     P4SEL1 &= ~(BIT6 | BIT7);
