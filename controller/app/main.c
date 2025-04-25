@@ -1,13 +1,17 @@
 
 #include "intrinsics.h"
+#include "msp430fr2355.h"
 #include "src/keypad_scan.h"
 #include "src/controller_control.h"
 #include "src/lcd_control.h"
+#include "src/rgb_control.h"
 #include <msp430.h>
 
 char dial_in[3];
 int mode;
 int board_state = 0;
+int Data_Cnt;
+volatile char Packet[MAX_PACKET_SIZE];
 
 int main(void)
 {
@@ -25,12 +29,14 @@ int main(void)
     while(1)
     {
         mode = set_mode();
+        rgb_control(2);                                         //set Green to indicate proper operation
         switch(mode){
             case 0xA: LCD_Clear();
                       LCD_print("Enter Dial In", 13);
                       set_dial(dial_in);
                       LCD_command(0x80);
                       LCD_print("Set Dial ", 9);
+                      //Convert dial_in to ascii to be printed
                       char dial_in_string[4];
                       dial_in_string[0] = dial_in[0] + '0';
                       dial_in_string[1] = '.';
@@ -42,7 +48,20 @@ int main(void)
                       mode = 0;
                       __delay_cycles(200);
                       break;
-            case 0xB: //I2C sending to slave
+            case 0xB:  //Send dial_in to slave to be displayed on matrix
+                        UCB1I2CSA = 0x0069; 
+                        Packet[0] = dial_in[0];
+                        Packet[1] = dial_in[1];
+                        Packet[2] = dial_in[2]; 
+                        Data_Cnt = 0;                            //ensure count is zero
+                        UCB1TBCNT = 3;                           // set packet length to 3
+                        UCB1CTLW0 |= UCTR;                       // Transmitter mode
+                        UCB1IE |= UCTXIE0;                       // Enable TX interrupt
+                        UCB1CTLW0 |= UCTXSTT;                    // Start transmission
+                        rgb_control(3);                          // set blue for valid transaction
+                        __delay_cycles(20000);
+
+                        //Check Current Board State
                      if(board_state == 0){
                         LCD_clear_second_line(16);
                         LCD_print("Board Off", 9);
@@ -52,16 +71,26 @@ int main(void)
                         LCD_print("Board On", 8);
                       }break;
 
-            case 0xD: if(board_state == 1){
+            case 0xD:   UCB1I2CSA = 0x0069;
+                        Packet[0] = 0xD;
+                        Data_Cnt = 0;                           //ensure count is zero 
+                        UCB1TBCNT = 1;                          //set packet length to 1
+                        UCB1CTLW0 |= UCTR;                      // Transmitter mode
+                        UCB1IE |= UCTXIE0;                       // Enable TX interrupt
+                        UCB1CTLW0 |= UCTXSTT;                   //Start transmission
+                         rgb_control(3);                          // set blue for valid transaction
+                        __delay_cycles(20000);
+                        //Update Board State
+                        if(board_state == 1){                   //check current board state
                         LCD_clear_second_line(16);
                         LCD_print("Board Off", 9);
-                        board_state = 0;
+                        board_state = 0;                        //next board state
                         break;
-                      }else if(board_state == 0){
+                      }else if(board_state == 0){               //check current board state
                         LCD_clear_second_line(16);
                         LCD_print("Board On", 8);
-                        board_state = 1;
-                      }break;
+                        board_state = 1;                        //next board state
+                      }break;   
             default:  break;
         }
     
@@ -69,5 +98,18 @@ int main(void)
     
         P6OUT ^= BIT6;                      // Toggle P1.0 using exclusive-OR
         __delay_cycles(100000);             // Delay for 100000*(1/MCLK)=0.1s
+    }
+}
+
+//------------------Interrupt Service Routines----------------------------------
+//-----------------------I2C Send ISR-------------------------------------------
+#pragma vector = USCI_B1_VECTOR
+__interrupt void USCI_B1_ISR(void) {
+    if(Data_Cnt < sizeof(Packet)) {
+        UCB1TXBUF = Packet[Data_Cnt++];  
+    }else{
+         Data_Cnt = 0;
+         UCB1IE &= ~UCTXIE0;        // Disable TX interrupt
+         UCB1CTLW0 |= UCTXSTP;      // Send STOP condition
     }
 }
