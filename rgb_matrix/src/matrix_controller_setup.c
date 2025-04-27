@@ -7,10 +7,10 @@ void rgb_controller_init(void) {
     P3OUT &= ~(R1 | G1 | B1 | R2 | G2 | B2);    //R1, G1, B1, R2, G2, B2)
     P3DIR |= (R1 | G1 | B1 | R2 | G2 | B2);
 
-    P1OUT &= ~(A | B | C | D);                  //A, B, C, D (control signals)
+    P1OUT &= ~(A | B | C | D);                  //A, B, C, D (shift signals)
     P1DIR |= (A | B | C | D);
 
-    P2OUT &= ~(LAT | CLK | OE);
+    P2OUT &= ~(LAT | CLK | OE);                 //Latch, Clock, and Color Control Signsl
     P2DIR |= (LAT | CLK | OE);
     
   
@@ -32,4 +32,8 @@ void rgb_controller_init(void) {
 //--Enable I2C Interrupts
     UCB1IE |= UCRXIE0;                      // Enable I2C receive interrupt
     __bis_SR_register(GIE);                 // Enable global interrupts
+
+//---------------------------------------------Status LED-----------------------------
+    P6OUT &= ~BIT6;                         // Clear P1.0 output latch for a defined power-on state
+    P6DIR |= BIT6;                          // Set P1.0 to output direction
 }
