@@ -3,8 +3,18 @@
 #include "sys/cdefs.h"
 
 void rgb_controller_init(void) {
+//----------------------------RGB Matrix Ports-----------------------------------
+    P3OUT &= ~(R1 | G1 | B1 | R2 | G2 | B2);    //R1, G1, B1, R2, G2, B2)
+    P3DIR |= (R1 | G1 | B1 | R2 | G2 | B2);
+
+    P1OUT &= ~(A | B | C | D);                  //A, B, C, D (control signals)
+    P1DIR |= (A | B | C | D);
+
+    P2OUT &= ~(LAT | CLK | OE);
+    P2DIR |= (LAT | CLK | OE);
+    
   
-      //------------------------------- I2C Initialization -----------------------------    
+//------------------------------- I2C Initialization -----------------------------    
 //--Put eUSCI_B0 into software reset to allow configuration
     UCB1CTLW0 |= UCSWRST;       
 

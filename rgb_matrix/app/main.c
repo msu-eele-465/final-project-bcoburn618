@@ -6,6 +6,7 @@ volatile int Data_Cnt = 0;
 volatile int RXDATA[MAX_PACKET_SIZE];
 
 
+
 int main(void)
 {
     WDTCTL = WDTPW | WDTHOLD;               // Stop watchdog timer
