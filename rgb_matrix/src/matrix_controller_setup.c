@@ -3,6 +3,13 @@
 #include "sys/cdefs.h"
 
 void rgb_controller_init(void) {
+//---------------------------Configure Clock-----------------------------------
+    CSCTL0 = CSKEY;             // Unlock CS registers
+    CSCTL1 = DCOFSEL_5;         // Set DCO to 24 MHz (DCOFSEL_5 = 24 MHz)
+    CSCTL2 = SELM__DCOCLK | SELS__DCOCLK | SELA__REFOCLK; // MCLK & SMCLK = DCO, ACLK = REFO
+    CSCTL3 = 0;                 // Set all dividers to 1 (no division)
+    CSCTL0 = 0;                 // Lock CS registers
+    PM5CTL0 &= ~LOCKLPM5;                   // Disable the GPIO power-on default high-impedance mode
 //----------------------------RGB Matrix Ports-----------------------------------
     P3OUT &= ~(R1 | G1 | B1 | R2 | G2 | B2);    //R1, G1, B1, R2, G2, B2)
     P3DIR |= (R1 | G1 | B1 | R2 | G2 | B2);

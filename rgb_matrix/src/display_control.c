@@ -32,26 +32,25 @@ void latch(void) {
 }
 
 void enableDisplay(bool on) {
-    if (on) {
+    if(on){
         P2OUT &= ~OE;
-    } else {
+    }else{
         P2OUT |= OE;
     }
 }
 
 void selectRow(uint8_t row) {
     P1OUT &= ~(A | B | C | D);
-    P1OUT &= ~(A | B | C | D);
-    if (row & 0x01) {
+    if(row & 0x01){
     P1OUT |= A;
     }
-    if (row & 0x02) {
+    if(row & 0x02){
     P1OUT |= B;
     }
-    if (row & 0x04) {
+    if(row & 0x04){
     P1OUT |= C;
     }
-    if (row & 0x08) {
+    if(row & 0x08){
     P1OUT |= D;
     }
 }
@@ -64,7 +63,7 @@ void fillScreenRed(void) {
 
         selectRow(row); // Select the row
 
-        for ( col = 0; col < 64; col++) {
+        for (col = 0; col < 64; col++) {
             // Set top pixel (R1 ON, G1 OFF, B1 OFF)
             setRGBTop(true, false, false);
 
