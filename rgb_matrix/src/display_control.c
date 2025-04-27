@@ -41,10 +41,19 @@ void enableDisplay(bool on) {
 
 void selectRow(uint8_t row) {
     P1OUT &= ~(A | B | C | D);
-    if (row & 0x01) P1OUT |= A;
-    if (row & 0x02) P1OUT |= B;
-    if (row & 0x04) P1OUT |= C;
-    if (row & 0x08) P1OUT |= D;
+    P1OUT &= ~(A | B | C | D);
+    if (row & 0x01) {
+    P1OUT |= A;
+    }
+    if (row & 0x02) {
+    P1OUT |= B;
+    }
+    if (row & 0x04) {
+    P1OUT |= C;
+    }
+    if (row & 0x08) {
+    P1OUT |= D;
+    }
 }
 
 void fillScreenRed(void) {
