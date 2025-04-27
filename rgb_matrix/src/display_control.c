@@ -50,7 +50,7 @@ void selectRow(uint8_t row) {
 void fillScreenRed(void) {
     uint8_t row;
     uint8_t col;
-    for (row = 0; row < 16; row++) {  // Only 0-15 rows because it handles top/bottom
+    for (row = 0; row < 16; row++) {  // rows 0-15
         enableDisplay(false); // Disable while shifting data
 
         selectRow(row); // Select the row
@@ -62,7 +62,7 @@ void fillScreenRed(void) {
             // Set bottom pixel (R2 ON, G2 OFF, B2 OFF)
             setRGBBottom(true, false, false);
 
-            // Shift data for this pixel
+            // Shift data for current pixel
             pulseCLK();
         }
 
@@ -73,7 +73,7 @@ void fillScreenRed(void) {
         enableDisplay(true);
 
         // Hold it briefly so it’s visible
-        __delay_cycles(1000);  // Adjust if too dim or flickery
+        __delay_cycles(1000);  
 
         // Turn display off before next row
         enableDisplay(false);
