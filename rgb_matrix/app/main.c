@@ -6,6 +6,9 @@
 
 volatile int Data_Cnt = 0;
 volatile int RXDATA[MAX_PACKET_SIZE];
+volatile char dial_in[3];  
+volatile bool new_dial_received = false;
+
 
 
 
@@ -18,9 +21,14 @@ int main(void)
 
     while(1)
     {
-        fillScreenRed();
-        P6OUT ^= BIT6;                      // Toggle P1.0 using exclusive-OR
-        //__delay_cycles(100000);             // Delay for 100000*(1/MCLK)=0.1s
+       
+        if(dial_in[0] != 0xD && dial_in[0] != 0){
+           displayET(dial_in);
+        }
+        else{
+            clearScreen();
+        }
+        
     }
 }
 //--------------Interupt Service Routines--------------------------------------------
@@ -30,7 +38,12 @@ __interrupt void EUSCI_B1_ISR(void)
 {
     switch (__even_in_range(UCB1IV, 0x1E)) {
         case 0x16:  
-            RXDATA[Data_Cnt++] = UCB1RXBUF;  // Read received byte
+            dial_in[Data_Cnt++] = UCB1RXBUF;  // Read received byte
+            if(Data_Cnt == 3){
+                Data_Cnt = 0;
+            }else if(dial_in[0] == 0xD){
+                Data_Cnt = 0;
+            }
 
             break;
 

@@ -13,7 +13,9 @@ void pulseCLK(void);
 void latch(void);
 void enableDisplay(bool on);
 void selectRow(uint8_t row);
+void clearScreen(void);
 void fillScreenRed(void);
+void displayET(char dial_in[3]);
 
 
 
