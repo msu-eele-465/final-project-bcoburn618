@@ -1,3 +1,4 @@
+#include "src/display_control.h"
 #include "src/matrix_controller_setup.h"
 #include <msp430.h>
 #include <stddef.h>
@@ -6,7 +7,7 @@
 
 volatile int Data_Cnt = 0;
 volatile int RXDATA[MAX_PACKET_SIZE];
-volatile char dial_in[3];  
+volatile int dial_in[3];  
 volatile bool new_dial_received = false;
 
 
@@ -22,11 +23,13 @@ int main(void)
     while(1)
     {
        
-        if(dial_in[0] != 0xD && dial_in[0] != 0){
-           displayET(dial_in);
+        if(dial_in[0] != 0xD){
+          displayET(dial_in, true, true, true);
+         
         }
         else{
-            clearScreen();
+            fillScreenRed();
+            //clearScreen();
         }
         
     }

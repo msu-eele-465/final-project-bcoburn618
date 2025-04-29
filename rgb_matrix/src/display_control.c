@@ -73,85 +73,69 @@ void clearScreen(void)
 
 
 
-void displayET(char dial_in[3]) {
+void displayET(int dial_in[3], bool r, bool g, bool b) {
     uint8_t row, col;
-    uint8_t i, j;
     uint8_t pixel;
     uint8_t currentCol;
+
     const uint8_t font5x7[][5] = {
-    {0x7E, 0x81, 0x81, 0x81, 0x7E}, // 0
-    {0x00, 0x82, 0xFF, 0x80, 0x00}, // 1
-    {0xE2, 0x91, 0x91, 0x91, 0x8E}, // 2
-    {0x42, 0x81, 0x89, 0x89, 0x76}, // 3
-    {0x1C, 0x12, 0x11, 0xFF, 0x10}, // 4
-    {0x4F, 0x89, 0x89, 0x89, 0x71}, // 5
-    {0x7E, 0x89, 0x89, 0x89, 0x72}, // 6
-    {0x01, 0xE1, 0x11, 0x09, 0x07}, // 7
-    {0x76, 0x89, 0x89, 0x89, 0x76}, // 8
-    {0x4E, 0x91, 0x91, 0x91, 0x7E}  // 9
+        {0x7E, 0x81, 0x81, 0x81, 0x7E}, // 0
+        {0x00, 0x82, 0xFF, 0x80, 0x00}, // 1
+        {0xE2, 0x91, 0x91, 0x91, 0x8E}, // 2
+        {0x42, 0x81, 0x89, 0x89, 0x76}, // 3
+        {0x1C, 0x12, 0x11, 0xFF, 0x10}, // 4
+        {0x4F, 0x89, 0x89, 0x89, 0x71}, // 5
+        {0x7E, 0x89, 0x89, 0x89, 0x72}, // 6
+        {0x01, 0xE1, 0x11, 0x09, 0x07}, // 7
+        {0x76, 0x89, 0x89, 0x89, 0x76}, // 8
+        {0x4E, 0x91, 0x91, 0x91, 0x7E}  // 9
+    };
+
+    const uint8_t fontDot[5] = {
+    0x00, 0x80, 0x00, 0x00, 0x00
 };
 
-const uint8_t fontDot[5] = {
-    0x00, 0x00, 0x00, 0x01, 0x01
-};
-
-    
-    // Disable display while writing
     enableDisplay(false);
-    
-    for (row = 0; row < 8; row++) { // 7 rows per character
-        selectRow(row); // Select current row
 
-        // For each column across the whole display
+    for (row = 0; row < 8; row++) {
+        selectRow(row);
+
         for (col = 0; col < 64; col++) {
-
-            // Figure out which part of the number we are in
             pixel = 0;
 
             if (col < 5) {
-                // First digit
                 currentCol = font5x7[dial_in[0]][col];
                 pixel = (currentCol >> row) & 0x01;
-            }
-            else if (col >= 6 && col < 8) {
-                // Decimal point is narrow (at col 6-10)
+            } else if (col >= 6 && col < 8) {
                 currentCol = fontDot[col - 6];
                 pixel = (currentCol >> row) & 0x01;
-            }
-            else if (col >= 9 && col < 14) {
-                // Second digit
+            } else if (col >= 9 && col < 14) {
                 currentCol = font5x7[dial_in[1]][col - 9];
                 pixel = (currentCol >> row) & 0x01;
-            }
-            else if (col >= 15 && col < 20) {
-                // Third digit
+            } else if (col >= 15 && col < 20) {
                 currentCol = font5x7[dial_in[2]][col - 15];
                 pixel = (currentCol >> row) & 0x01;
-            }
-            else {
-                pixel = 0; // Empty space
-            }
-
-            // Set pixel color
-            if (pixel) {
-                setRGBTop(true, false, false);  // Red pixel ON
-                setRGBBottom(true, false, false);  // Red pixel ON
             } else {
-                setRGBTop(false, false, false);  // Pixel OFF
-                setRGBBottom(false, false, false);  // Pixel OFF
+                pixel = 0;
             }
 
-            // Shift to next column
+            // Top row only  (don't duplicate on bottom row)
+            if (pixel) {
+                setRGBTop(r, g, b);
+            } else {
+                setRGBTop(false, false, false);
+            }
+
             pulseCLK();
         }
 
-        // After filling a row, latch it and display it
         latch();
         enableDisplay(true);
-        __delay_cycles(1000); // Brief hold
+        __delay_cycles(1000);
         enableDisplay(false);
     }
 }
+
 
 void fillScreenRed(void) {
     uint8_t row;
@@ -185,3 +169,10 @@ void fillScreenRed(void) {
         enableDisplay(false);
     }
 }
+
+
+
+
+
+
+
