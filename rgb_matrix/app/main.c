@@ -10,10 +10,10 @@ volatile int RXDATA[MAX_PACKET_SIZE];
 volatile int dial_in[3];  
 volatile bool new_dial_received = false;
 volatile bool display_status = true;
-bool was_display_on;
-bool r;
-bool g;
-bool b;
+volatile int color;
+volatile bool r = true;
+volatile bool g = false;
+volatile bool b = false;
 
 
 int main(void)
@@ -27,7 +27,41 @@ int main(void)
     {
        
        while(display_status) {
-            displayET(dial_in, true, true, true);
+            switch(color){
+                case 0x0:   r = true;
+                            g = false;
+                             b = false;
+                            break;
+                case 0x1:   r = false;
+                            g = true;
+                            b = false;
+                            break;
+                case 0x2:   r = false;
+                            g = false;
+                            b = true;
+                            break;
+                case 0x3:   r = true;
+                            g = true;
+                            b = false;
+                            break;
+                case 0x4:   r = false;
+                            g = true;
+                            b = true;
+                            break;
+                case 0x5:   r = true;
+                            g = false;
+                            b = true;
+                            break;
+                case 0x6:   r = true;
+                            g = true;
+                            b = true;
+                            break;
+                default:    r = true;
+                            g = false;
+                            b = false;
+                            break;
+            }
+            displayET(dial_in, r, g, b);
            
         }
       while(display_status == false) {
@@ -53,7 +87,8 @@ __interrupt void EUSCI_B1_ISR(void)
             }else if(RXDATA[0] == 0xD){
                 display_status = !display_status;  // Toggle boolean
                 Data_Cnt = 0;
-            }else if(RXDATA[0] == 0xC){
+            }else if(RXDATA[0] == 0xC && Data_Cnt == 2){
+                color = RXDATA[1];
                 Data_Cnt = 0;
                 //color processing
             }

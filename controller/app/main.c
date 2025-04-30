@@ -90,7 +90,6 @@ int main(void)
                         UCB1CTLW0 |= UCTXSTT;                    // Start transmission
                         rgb_control(3);                          // set blue for valid transaction
                         __delay_cycles(20000);
-                        LCD_command(0xCA);
                         clear_for_color();
                         LCD_print(colors[color_index], strlen(colors[color_index]));
                         LCD_clear_first_line(16);
@@ -112,11 +111,15 @@ int main(void)
                         if(board_state == 1){                   //check current board state
                         LCD_clear_second_line(16);
                         LCD_print("Board Off", 9);
+                        clear_for_color();
+                        LCD_print(colors[color_index], strlen(colors[color_index]));
                         board_state = 0;                        //next board state
                         break;
                       }else if(board_state == 0){               //check current board state
                         LCD_clear_second_line(16);
                         LCD_print("Board On", 8);
+                        clear_for_color();
+                        LCD_print(colors[color_index], strlen(colors[color_index]));
                         board_state = 1;                        //next board state
                       }break;   
             default:  break;
