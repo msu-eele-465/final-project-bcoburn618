@@ -13,6 +13,7 @@ volatile bool new_dial_received = false;
 
 
 
+
 int main(void)
 {
     WDTCTL = WDTPW | WDTHOLD;               // Stop watchdog timer
@@ -60,3 +61,4 @@ __interrupt void EUSCI_B1_ISR(void)
     
     }
 }
+

@@ -1,6 +1,7 @@
 #include "src/matrix_controller_setup.h"
 #include "intrinsics.h"
 #include "sys/cdefs.h"
+#include "msp430.h"
 
 void rgb_controller_init(void) {
 //---------------------------Configure Clock-----------------------------------
@@ -19,7 +20,7 @@ void rgb_controller_init(void) {
 
     P2OUT &= ~(LAT | CLK | OE);                 //Latch, Clock, and Color Control Signsl
     P2DIR |= (LAT | CLK | OE);
-    
+
   
 //------------------------------- I2C Initialization -----------------------------    
 //--Put eUSCI_B0 into software reset to allow configuration
@@ -41,6 +42,7 @@ void rgb_controller_init(void) {
     __bis_SR_register(GIE);                 // Enable global interrupts
 
 //---------------------------------------------Status LED-----------------------------
-    P6OUT &= ~BIT6;                         // Clear P1.0 output latch for a defined power-on state
-    P6DIR |= BIT6;                          // Set P1.0 to output direction
+    P6OUT &= ~BIT6;                         // Clear P6.6 output latch for a defined power-on state
+    P6DIR |= BIT6;                          // Set P6.6 to output direction
+
 }
