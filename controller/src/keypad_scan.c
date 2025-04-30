@@ -122,9 +122,10 @@ int set_mode(void) {
 }
 
 int set_color(void) {
-    char key = scan_keypad();  // Check keypad once
+    char key;
     int digit = -1;
-
+while(digit == -1){
+    key = scan_keypad();
     if (key != 0) {
         // Decode ASCII to digit
         if (key >= '0' && key <= '9') {
@@ -141,6 +142,6 @@ int set_color(void) {
             }
         }
     }
-
+}
     return digit;  // -1 if no key or invalid key
 }

@@ -24,6 +24,7 @@ void LCD_write(unsigned char message);  //sends charcaters to screen
 void LCD_clear_first_line(int spaces);
 void LCD_print(const char *word, int length);
 void LCD_clear_second_line(int spaces);
+void clear_for_color();
 
 
 #endif

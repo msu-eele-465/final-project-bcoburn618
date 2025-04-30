@@ -6,13 +6,15 @@
 #include "src/lcd_control.h"
 #include "src/rgb_control.h"
 #include <msp430.h>
+#include <string.h>
 
 char dial_in[3];
 int mode;
 int board_state = 1;
 int Data_Cnt;
 volatile char Packet[MAX_PACKET_SIZE];
-int color;
+int color_index;
+const char *colors[7] = {"Red", "Green", "Blue", "Yellow", "Cyan", "Purple", "White"};
 
 int main(void)
 {
@@ -70,14 +72,17 @@ int main(void)
                       }else if(board_state == 1){
                         LCD_clear_second_line(16);
                         LCD_print("Board On", 8);
-                      }break;
+                      }
+                        clear_for_color();                      //clear previous color
+                        LCD_print(colors[color_index], strlen(colors[color_index]));
+                      break;
             
             case 0xC:   LCD_clear_first_line(16);
                         LCD_print("Select Color", 12);
-                        color = set_color();
+                        color_index = set_color();
                         UCB1I2CSA = 0x0069; 
                         Packet[0] = 0xC;
-                        Packet[1] = color;
+                        Packet[1] = color_index;
                         Data_Cnt = 0;                            //ensure count is zero
                         UCB1TBCNT = 2;                           // set packet length to 3
                         UCB1CTLW0 |= UCTR;                       // Transmitter mode
@@ -85,6 +90,13 @@ int main(void)
                         UCB1CTLW0 |= UCTXSTT;                    // Start transmission
                         rgb_control(3);                          // set blue for valid transaction
                         __delay_cycles(20000);
+                        LCD_command(0xCA);
+                        clear_for_color();
+                        LCD_print(colors[color_index], strlen(colors[color_index]));
+                        LCD_clear_first_line(16);
+                        LCD_print("Set Dial ", 9);
+                         LCD_print(dial_in_string, 4);
+                        mode = 0;
                         break;
 
             case 0xD:   UCB1I2CSA = 0x0069;
