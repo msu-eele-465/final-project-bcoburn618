@@ -28,37 +28,21 @@ int main(void)
        
        while(display_status) {
             switch(color){
-                case 0x0:   r = true;
-                            g = false;
-                             b = false;
+                case 0x0:   r = true; g = false; b = false;
                             break;
-                case 0x1:   r = false;
-                            g = true;
-                            b = false;
+                case 0x1:   r = false; g = true; b = false;
                             break;
-                case 0x2:   r = false;
-                            g = false;
-                            b = true;
+                case 0x2:   r = false; g = false; b = true;
                             break;
-                case 0x3:   r = true;
-                            g = true;
-                            b = false;
+                case 0x3:   r = true; g = true; b = false;
                             break;
-                case 0x4:   r = false;
-                            g = true;
-                            b = true;
+                case 0x4:   r = false; g = true; b = true;
                             break;
-                case 0x5:   r = true;
-                            g = false;
-                            b = true;
+                case 0x5:   r = true; g = false; b = true;
                             break;
-                case 0x6:   r = true;
-                            g = true;
-                            b = true;
+                case 0x6:   r = true; g = true; b = true;
                             break;
-                default:    r = true;
-                            g = false;
-                            b = false;
+                default:    r = true; g = false; b = false;
                             break;
             }
             displayET(dial_in, r, g, b);
