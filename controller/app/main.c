@@ -9,9 +9,10 @@
 
 char dial_in[3];
 int mode;
-int board_state = 0;
+int board_state = 1;
 int Data_Cnt;
 volatile char Packet[MAX_PACKET_SIZE];
+int color;
 
 int main(void)
 {
@@ -70,6 +71,21 @@ int main(void)
                         LCD_clear_second_line(16);
                         LCD_print("Board On", 8);
                       }break;
+            
+            case 0xC:   LCD_clear_first_line(16);
+                        LCD_print("Select Color", 12);
+                        color = set_color();
+                        UCB1I2CSA = 0x0069; 
+                        Packet[0] = 0xC;
+                        Packet[1] = color;
+                        Data_Cnt = 0;                            //ensure count is zero
+                        UCB1TBCNT = 2;                           // set packet length to 3
+                        UCB1CTLW0 |= UCTR;                       // Transmitter mode
+                        UCB1IE |= UCTXIE0;                       // Enable TX interrupt
+                        UCB1CTLW0 |= UCTXSTT;                    // Start transmission
+                        rgb_control(3);                          // set blue for valid transaction
+                        __delay_cycles(20000);
+                        break;
 
             case 0xD:   UCB1I2CSA = 0x0069;
                         Packet[0] = 0xD;
