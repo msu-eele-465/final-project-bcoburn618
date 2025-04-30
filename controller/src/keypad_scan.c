@@ -120,3 +120,28 @@ int set_mode(void) {
 
     return digit;  // -1 if no key or invalid key
 }
+
+int set_color(void) {
+    char key;
+    int digit = -1;
+while(digit == -1){
+    key = scan_keypad();
+    if (key != 0) {
+        // Decode ASCII to digit
+        if (key >= '0' && key <= '9') {
+            digit = key - '0';
+        } else {
+            switch (key) {
+                case 'A': digit = 0xA; break;
+                case 'B': digit = 0xB; break;
+                case 'C': digit = 0xC; break;
+                case 'D': digit = 0xD; break;
+                case '*': digit = 14; break;
+                case '#': digit = 15; break;
+                default: digit = -1; break;  // Invalid key
+            }
+        }
+    }
+}
+    return digit;  // -1 if no key or invalid key
+}

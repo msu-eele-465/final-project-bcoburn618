@@ -196,3 +196,12 @@ void LCD_print(const char *word, int length) {
         LCD_write(word[i]);  // Send each character to LCD
     }
 }
+
+void clear_for_color(void){
+    int i;
+    LCD_command(0xCA);
+    for(i = 0; i< 6; i++){
+         LCD_write(0b00010000);      // blank character
+    }
+    LCD_command(0xCA);
+}
