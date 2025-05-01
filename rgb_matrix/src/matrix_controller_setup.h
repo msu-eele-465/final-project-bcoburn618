@@ -19,8 +19,6 @@
 #define LAT  BIT0
 #define CLK  BIT1
 #define OE   BIT2
-//--------------------IR Receiver----------------------
-#define IR   BIT3
 
 #define SLAVE_ADDR 0x69
 #define MAX_PACKET_SIZE 3

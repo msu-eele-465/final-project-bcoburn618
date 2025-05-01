@@ -144,3 +144,40 @@ __interrupt void USCI_B1_ISR(void) {
          UCB1CTLW0 |= UCTXSTP;      // Send STOP condition
     }
 }
+//----------------------------Button ISR---------------------------------------
+#pragma vector = PORT1_VECTOR
+__interrupt void Port_1(void)
+{
+    
+    UCB1I2CSA = 0x0069;
+    Packet[0] = 0xD;
+    Data_Cnt = 0;                           //ensure count is zero 
+    UCB1TBCNT = 1;                          //set packet length to 1
+    UCB1CTLW0 |= UCTR;                      // Transmitter mode
+    UCB1IE |= UCTXIE0;                       // Enable TX interrupt
+    UCB1CTLW0 |= UCTXSTT;                   //Start transmission
+    rgb_control(3);                          // set blue for valid transaction
+    __delay_cycles(20000);
+    //Update Board State
+    switch(board_state){
+    
+        case 0:  LCD_clear_second_line(16);
+                 LCD_print("Board On", 8);
+                 clear_for_color();
+                 LCD_print(colors[color_index], strlen(colors[color_index]));
+                 board_state = 1;                        //next board state
+                break;
+
+        case 1:  LCD_clear_second_line(16);
+                 LCD_print("Board Off", 9);
+                 clear_for_color();
+                 LCD_print(colors[color_index], strlen(colors[color_index]));
+                 board_state = 0;                        //next board state
+                break;
+        
+        default: 
+                break;
+    }
+   
+    P1IFG  &= ~BUTTON;
+}
