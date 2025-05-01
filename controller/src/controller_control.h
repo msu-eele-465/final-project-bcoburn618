@@ -6,6 +6,7 @@
 
 #define MAX_PACKET_SIZE 3
 #define SLAVE_ADDRESS 0x69
+#define BUTTON  BIT3
 
 #include <msp430.h>
 

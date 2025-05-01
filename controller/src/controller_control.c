@@ -25,6 +25,16 @@ void controller_init(){
 
     P6DIR |= BIT6;                             // Set P16 to output direction
     P6OUT |= BIT6;      // Clear P16 output latch for a defined power-on state
+//---------------------Button ISR Initialization--------------------------------
+    // Configure P1.3 as input with pull-up resistor
+    P1DIR &= ~BUTTON;        // Set P1.3 as input
+    P1REN |= BUTTON;         // Enable  pull-up/down resistor
+    P1OUT |= BUTTON;         // Select pull-up (keeps pin high when button unpressed)
+
+    // Configure interrupt
+    P1IES |= BUTTON;         // high to low sensitivity
+    P1IFG &= ~BUTTON;        // Clear interrupt flag
+    P1IE  |= BUTTON;         // Enable interrupt for P1.3
 
    
 //------------------------------- I2C Initialization -----------------------------    
