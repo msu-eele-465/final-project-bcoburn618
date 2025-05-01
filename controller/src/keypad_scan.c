@@ -5,12 +5,7 @@ EELE 465
 Project 3: Keypad LED Pattersn
 Description:  
 
-scan_keypad
-    This function scans the input of the key pad by setting the rows as inputs and the columns as outputs.
-    The first column is set high and all the rows are checked to see if both the row and column are high corresponding
-    to a key press.  If no key is detected on the first column, the logic will continue and the next row set high
-    till a key press is detected.  A value will only be returned if a key is pressed and will only be sent when the
-    key is released.  
+
 
 
 led_pattern
@@ -38,7 +33,13 @@ char keymap[4][4] = {
     {'7', '8', '9', 'C'},
     {'*', '0', '#', 'D'}
 };
-
+/*
+    This function scans the input of the key pad by setting the rows as inputs and the columns as outputs.
+    The first column is set high and all the rows are checked to see if both the row and column are high corresponding
+    to a key press.  If no key is detected on the first column, the logic will continue and the next row set high
+    till a key press is detected.  A value will only be returned if a key is pressed and will only be sent when the
+    key is released.  
+*/
 char scan_keypad(void){
     unsigned int row, col;
     const char row_pin[4] = {BIT0, BIT1, BIT2, BIT3};
@@ -66,7 +67,12 @@ char scan_keypad(void){
     return 0; // No key pressed
 
 }
-
+/*
+This function allows the user to enter three digits from the keypad that
+will be used as the dial sent to the RGB screen and displayed on the
+LCD screen.  It loops through scan_keypad function three times, then 
+decodes the ascii characters returned to hex.
+*/
     void set_dial(char dial_in[3]) {
     int i = 0;
     char key = 0;
@@ -96,7 +102,12 @@ char scan_keypad(void){
         }
     }
 }
-
+/*
+The set_mode function allows the user to choose a mode for the dial_board system.
+The user is able to choose one value which should be A, B, C, or D.  This is done by 
+using the scan_keypad function and the returned value is decoded from its ascii value 
+to a hex value.
+*/
 int set_mode(void) {
     char key = scan_keypad();  // Check keypad once
     int digit = -1;
@@ -120,7 +131,14 @@ int set_mode(void) {
 
     return digit;  // -1 if no key or invalid key
 }
-
+/*
+This function utilizes the scan keypad function to allow
+the user to select a number 0-6 corresponding to a color
+that the RGB display can produce.  The value is returned 
+from the scan_keypad function, decoded from ascii to hex
+and returned to be sent to the RGB display and the color
+shown on the LCD screen
+*/
 int set_color(void) {
     char key;
     int digit = -1;
