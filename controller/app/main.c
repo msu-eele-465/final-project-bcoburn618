@@ -1,4 +1,23 @@
 
+/*
+Final Project (RGB Digital Dial Board)
+EELE 465
+Beau Coburn
+05/01/2025
+Description:
+
+This program allows the user to control a 64x32 matrix RGB display.  Utilizing the 4x4 keypad
+the user can select between four diffent functionalites.  Pressing A, the user is prompted by 
+a message on the LCD screen to enter a dial in.  A three digit number can be entered by pressing digits 0-9
+on the keypad.  The system then prompts the user to either send the dial (via I2C) or choose a different dial.
+If the user chooses to send the dial, the data will be set to I2C to the matrix controller to be displayed.
+If the user selects C, they will then be prompted by the LCD screen to pick a color for the RGB display.  A
+new color can be selected by pressing 0-6.  This data will then be passed to the matrix controller for it to
+be processed.  The color of the screen at the current moment will be displayed in the lower right corner of the
+LCD screen.  The user can then press D which will toggle the state of the RGB display by sending a flag over
+I2C.  The state of the board is also shown on the LCD screen and can be seen in the lower left corner.  
+The status of the RGB display can also be controlled by pressing an external button.
+*/
 #include "intrinsics.h"
 #include "msp430fr2355.h"
 #include "src/keypad_scan.h"
@@ -36,8 +55,8 @@ int main(void)
         switch(mode){
             case 0xA: LCD_Clear();
                       LCD_print("Enter Dial In", 13);
-                      set_dial(dial_in);
-                      LCD_command(0x80);
+                      set_dial(dial_in);                        // prompt user for three digits (dial in)
+                      LCD_command(0x80);                        //move cursor to first space on first line
                       LCD_print("Set Dial ", 9);
                       //Convert dial_in to ascii to be printed
                       char dial_in_string[4];
@@ -46,9 +65,9 @@ int main(void)
                       dial_in_string[2] = dial_in[1] + '0';
                       dial_in_string[3] = dial_in[2] + '0';
                       LCD_print(dial_in_string, 4);
-                      LCD_command(0xC0);
+                      LCD_command(0xC0);                        // move cursor to first space of second line
                       LCD_print("B=Send A=Reset", 14);
-                      mode = 0;
+                      mode = 0;                                 // stop re-execution
                       __delay_cycles(200);
                       break;
             case 0xB:  //Send dial_in to slave to be displayed on matrix
@@ -94,7 +113,7 @@ int main(void)
                         LCD_print(colors[color_index], strlen(colors[color_index]));
                         LCD_clear_first_line(16);
                         LCD_print("Set Dial ", 9);
-                         LCD_print(dial_in_string, 4);
+                        LCD_print(dial_in_string, 4);
                         mode = 0;
                         break;
 
@@ -149,14 +168,14 @@ __interrupt void USCI_B1_ISR(void) {
 __interrupt void Port_1(void)
 {
     
-    UCB1I2CSA = 0x0069;
+    UCB1I2CSA = 0x0069;                     // slave address
     Packet[0] = 0xD;
-    Data_Cnt = 0;                           //ensure count is zero 
-    UCB1TBCNT = 1;                          //set packet length to 1
+    Data_Cnt = 0;                           // ensure count is zero 
+    UCB1TBCNT = 1;                          // set packet length to 1
     UCB1CTLW0 |= UCTR;                      // Transmitter mode
-    UCB1IE |= UCTXIE0;                       // Enable TX interrupt
-    UCB1CTLW0 |= UCTXSTT;                   //Start transmission
-    rgb_control(3);                          // set blue for valid transaction
+    UCB1IE |= UCTXIE0;                      // Enable TX interrupt
+    UCB1CTLW0 |= UCTXSTT;                   // Start transmission
+    rgb_control(3);                         // set blue for valid transaction
     __delay_cycles(20000);
     //Update Board State
     switch(board_state){
@@ -164,14 +183,14 @@ __interrupt void Port_1(void)
         case 0:  LCD_clear_second_line(16);
                  LCD_print("Board On", 8);
                  clear_for_color();
-                 LCD_print(colors[color_index], strlen(colors[color_index]));
+                 LCD_print(colors[color_index], strlen(colors[color_index]));       // reprint current color
                  board_state = 1;                        //next board state
                 break;
 
         case 1:  LCD_clear_second_line(16);
                  LCD_print("Board Off", 9);
                  clear_for_color();
-                 LCD_print(colors[color_index], strlen(colors[color_index]));
+                 LCD_print(colors[color_index], strlen(colors[color_index]));      // reprint current color
                  board_state = 0;                        //next board state
                 break;
         

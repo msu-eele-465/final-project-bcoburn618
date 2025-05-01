@@ -3,10 +3,12 @@
 #include "sys/cdefs.h"
 
 
-
+/*
+The LCD_init function simply prepares the ports that will be used to 
+interface with the LCD screen.  This includes the data bus pins along
+with the register select pin, and the enable pin.
+*/
 void LCD_init(){
-    P1OUT &= ~BIT1;
-    P1DIR |= BIT1;
 //-----------------Ports Interfacing with LCD directly--------------------------------
     //Data Bus Pins (P1.7, 1.6, 1.5, 1.4)
     P2OUT &= ~(D7 | D6 | D5 | D4);
@@ -196,7 +198,11 @@ void LCD_print(const char *word, int length) {
         LCD_write(word[i]);  // Send each character to LCD
     }
 }
-
+/*
+The clear_for_color function is an easy function to clear the last few spaces on the
+second line where the color name is displayed on the LCD.  This allows for the new color
+to be printed with no remenents of the last color is the name is longer than the new color
+*/
 void clear_for_color(void){
     int i;
     LCD_command(0xCA);
