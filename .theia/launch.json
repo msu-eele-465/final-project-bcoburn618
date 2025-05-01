@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "rgb_matrix",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "rgb_matrix",
+                "resourceId": "/rgb_matrix"
+            }
+        },
+        {
+            "name": "controller",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "controller",
+                "resourceId": "/controller"
+            }
+        }
+    ]
+}
